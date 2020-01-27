@@ -1,0 +1,18 @@
+== MQTT Publish and Subscribe Examples with Eclipse Paho
+
+
+This repository contains two MQTT clients, that demonstrate the publish/subscribe pattern and the usage of topics. 
+Additionally Last Will and Testament (LWT), a feature of MQTT to detect an ungracefully disconnected client is implemented examplarily.
+
+=== Publisher / Sensor Client
+
+The publishes simulates two sensors: temperature and brightness. Each of the sensors has their own topic on which they are constantly publishing random values.
+On connect the client sends a LWT topic and message to the MQTT broker (in this case http://www.hivemq.com[HiveMQ] on the public http://mqtt-dashboard.com[MQTT Dashboard]). 
+If the client is disconnected ungracefully, the broker will send out the last will message for the client to let other clients know.
+
+=== Subscriber / Control Center
+
+The second client subscribes to all the topics from the sensor client by using a multi-level wildcard. It will print out every message that arrives on the command line.
+An additional message will be display, if the LWT message is received. In order to test this behavior it is necessary to exit the sensor client without disconnecting, for example by killing it with Ctrl+C.
+
+
