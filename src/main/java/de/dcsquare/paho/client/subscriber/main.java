@@ -23,18 +23,15 @@ public class main extends Application{
     private static TableView mqttTable;
     private List<MQTTTopic> activeTopics = new ArrayList<MQTTTopic>();
 
-    //getters and setters
     public static String getChannel(){
         return channel;
     }
-
     public static Scene getScene() {
         if (primaryStage == null) {
             System.out.println("scene not yet created");
         }
         return primaryStage.getScene();
     }
-    //end getter & setters
 
     //initialize the Application window
     public void start(Stage _primaryStage) throws Exception{
@@ -47,20 +44,6 @@ public class main extends Application{
         //scene has to be passed down to Dashboard Controller (trough all classes in hierarchy)
         final Subscriber subscriber = new Subscriber(channel, _primaryStage.getScene());
         subscriber.start();
-
-//        this.mqttTable = (TableView) _primaryStage.getScene().lookup("#mqttTable");
-//
-//        MQTTTopic newTopic = new MQTTTopic("test", "dfv");
-////        activeTopics.add(newTopic);
-//
-//        TableColumn topicColumn = new TableColumn("Topic");
-//        topicColumn.setCellValueFactory(new PropertyValueFactory<MQTTTopic, String>("topic"));
-//
-////        TableColumn valueColumn = new TableColumn("Value");
-////        topicColumn.setCellValueFactory(new PropertyValueFactory<MQTTTopic, String>("value"));
-//
-//        mqttTable.getColumns().addAll(topicColumn);
-//        mqttTable.getItems().add(newTopic);
     }
 
     public static void main(String... args) {

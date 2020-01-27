@@ -1,7 +1,5 @@
 package de.dcsquare.paho.client.subscriber;
 
-
-
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -32,16 +30,19 @@ public class DashboardController {
         TableColumn topicColumn = new TableColumn("Topic");
         TableColumn valueColumn = new TableColumn("Value");
         TableColumn stateColumn = new TableColumn("State");
+        TableColumn datetimeColumn = new TableColumn("last update");
 
         topicColumn.prefWidthProperty().bind(mqttTable.widthProperty().divide(4));
         valueColumn.prefWidthProperty().bind(mqttTable.widthProperty().divide(4));
         stateColumn.prefWidthProperty().bind(mqttTable.widthProperty().divide(4));
+        datetimeColumn.prefWidthProperty().bind(mqttTable.widthProperty().divide(4));
 
         topicColumn.setCellValueFactory(new PropertyValueFactory<MQTTTopic, String>("topic"));
         valueColumn.setCellValueFactory(new PropertyValueFactory<MQTTTopic, String>("recentValue"));
         stateColumn.setCellValueFactory(new PropertyValueFactory<MQTTTopic, String>("state"));
+        datetimeColumn.setCellValueFactory(new PropertyValueFactory<MQTTTopic, String>("lastUpdate"));
 
-        mqttTable.getColumns().addAll(topicColumn, valueColumn, stateColumn);
+        mqttTable.getColumns().addAll(topicColumn, valueColumn, stateColumn, datetimeColumn);
 
         //init Broker URL Label
         brokerURL.setText("Listening to Broker: " + BROKER_URL);
@@ -50,26 +51,31 @@ public class DashboardController {
 
 
     public void handleMessage(String message, String topic) {
-        //check if the topic has already been registered before
-        MQTTTopic currentTopic = null;
+
 
         //sensor gone
         if (topic.equals("toju/LWT")) {
             for (MQTTTopic d : activeTopics) {
-                d.setState("Sensor died");
-                refreshTable();
-            }
-        } else {
-            //listening to sensor values
-            for (MQTTTopic d : activeTopics) {
-                if (d.getTopic().equals(topic)) {
-                    currentTopic = d;
+                //assume that one sensor publishes several values to one topic, so in this case all sensors
+                // sending to topic/* "die"
+                if (topic.indexOf(d.getTopic().substring(0, d.getTopic().indexOf("/"))) != -1) {
+                    d.setState("Sensor died");
                 }
             }
-
-            handleTopics(currentTopic, topic, message);
-
+            refreshTable();
         }
+
+        //check if the topic has already been registered before
+        MQTTTopic currentTopic = null;
+
+        for (MQTTTopic d : activeTopics) {
+            if (d.getTopic().equals(topic)) {
+                currentTopic = d;
+            }
+        }
+        handleTopics(currentTopic, topic, message);
+
+
     }
 
     public void handleTopics(MQTTTopic currentTopic, String topic, String message) {

@@ -22,12 +22,9 @@ public class SubscribeCallback implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-//        System.out.println("Message arrived. Topic: " + topic + "  Message: " + message.toString());
-
         if ("home/LWT".equals(topic)) {
-            System.err.println("Sensor gone!");
-        }
-
+        System.err.println("Sensor gone!");
+    }
         dbc.handleMessage(message.toString(), topic);
     }
 

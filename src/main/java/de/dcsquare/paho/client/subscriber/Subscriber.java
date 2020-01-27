@@ -13,7 +13,6 @@ public class Subscriber {
 
     public static final String BROKER_URL = "tcp://broker.mqttdashboard.com:1883";
 
-
     //We have to generate a unique Client id.
     String clientId = Utils.getMacAddress() + "-sub";
     private MqttClient mqttClient;
@@ -26,7 +25,6 @@ public class Subscriber {
 
         try {
             mqttClient = new MqttClient(BROKER_URL, clientId);
-
         } catch (MqttException e) {
             e.printStackTrace();
             System.exit(1);
@@ -38,21 +36,14 @@ public class Subscriber {
             mqttClient.setCallback(new SubscribeCallback(scene, BROKER_URL));
             mqttClient.connect();
 
-            //Subscribe to all subtopics of toju
+            //Subscribe to all subtopics of "toju"
             final String topic = channel + "/#";
             mqttClient.subscribe(topic);
-
-            System.out.println("Subscriber is now listening to "+topic);
+            System.out.println("Subscriber is now listening to " + topic);
 
         } catch (MqttException e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
-
-//    public static void main(String... args) {
-//        final Subscriber subscriber = new Subscriber();
-//        subscriber.start();
-//    }
-
 }
